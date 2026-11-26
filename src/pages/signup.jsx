@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { z } from 'zod'
 
 import PasswordInput from '../components/password-input'
 import { Button } from '../components/ui/button'
@@ -10,7 +11,32 @@ import {
   CardHeader,
   CardTitle,
 } from '../components/ui/card'
+import { Checkbox } from '../components/ui/checkbox'
 import { Input } from '../components/ui/input'
+
+// eslint-disable-next-line no-unused-vars
+const signUpSchema = z.object({
+  firstName: z.string().trim().min(1, { message: 'O nome é obrigatório.' }),
+  lastName: z.string().trim().min(1, { message: 'O sobrenome é obrigatório.' }),
+  email: z
+    .string()
+    .trim()
+    .email({
+      message: 'O e-mail é inválido.',
+    })
+    .trim()
+    .min(1, { message: 'O e-mail é obrigatório.' }),
+  password: z
+    .string()
+    .trim()
+    .min(8, { message: 'A senha deve conter pelo menos 8 caracteres.' }),
+  passwordConfirmation: z.string().trim().min(1, {
+    message: 'A confirmação de senha é obrigatória.',
+  }),
+  terms: z.boolean().refine((value) => value === true, {
+    message: 'Você deve aceitar os termos para criar uma conta.',
+  }),
+})
 
 const SignUpPage = () => {
   return (
@@ -36,6 +62,20 @@ const SignUpPage = () => {
           <Button variant="outline" className="w-full">
             Login com o Google
           </Button>
+          <div className="items-top flex space-x-2">
+            <Checkbox id="terms" />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="terms"
+                className="text-xs text-muted-foreground opacity-75"
+              >
+                Ao clicar em “Criar conta”, você aceita{' '}
+                <a href="#" className="text-white underline">
+                  nosso termo de uso e política de privacidade.
+                </a>
+              </label>
+            </div>
+          </div>
         </CardFooter>
       </Card>
       <div className="flex items-center justify-center">
